@@ -7,10 +7,19 @@ import (
 	"github.com/Hordevcom/GameShelf/internal/models"
 )
 
-func (s *Service) AddGameToUser(ctx context.Context, usergame models.UserGameJSON, token string) error {
+type UserGameAdderDBAdder interface {
+	AddGameToUserDB(ctx context.Context, usergame models.UserGame) error
+	CheckGameInUserLibDB(ctx context.Context, gametitle, username string) (error, bool)
+}
+
+type UserAddGame struct {
+	UserGameAdderDBAdder
+}
+
+func (u *UserAddGame) AddGameToUser(ctx context.Context, usergame models.UserGameJSON, token string) error {
 	username := auth.GetUsername(token)
 
-	err := s.db.AddGameToUser(ctx, models.UserGame{
+	err := u.AddGameToUserDB(ctx, models.UserGame{
 		Username:   username,
 		GameTitle:  usergame.GameTitle,
 		GameStatus: usergame.GameStatus,
@@ -18,4 +27,9 @@ func (s *Service) AddGameToUser(ctx context.Context, usergame models.UserGameJSO
 	})
 
 	return err
+}
+
+func (u *UserAddGame) CheckGameInUserLib(ctx context.Context, gametitle string, token string) (error, bool) {
+	username := auth.GetUsername(token)
+	return u.CheckGameInUserLibDB(ctx, gametitle, username)
 }

@@ -7,7 +7,15 @@ import (
 	"github.com/Hordevcom/GameShelf/internal/models"
 )
 
-func (s *Service) UpdateGame(ctx context.Context, gameUpd models.UserGameUpdate, token string) error {
+type UserGameDBUpdater interface {
+	UpdateUserGame(ctx context.Context, userGameUpd models.UserGameUpdate, username string) error
+}
+
+type UserGameDbUpd struct {
+	UserGameDBUpdater
+}
+
+func (u *UserGameDbUpd) UpdateGame(ctx context.Context, gameUpd models.UserGameUpdate, token string) error {
 	username := auth.GetUsername(token)
-	return s.db.UodateUserGame(ctx, gameUpd, username)
+	return u.UpdateUserGame(ctx, gameUpd, username)
 }

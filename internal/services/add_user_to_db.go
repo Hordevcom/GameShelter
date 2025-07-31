@@ -7,11 +7,19 @@ import (
 	"golang.org/x/crypto/bcrypt"
 )
 
-func (s *Service) AddUserToDB(ctx context.Context, user models.UserAuth) error {
+type UserAdder interface {
+	AddUserToDB(ctx context.Context, username, password string) error
+}
+
+type UserAdd struct {
+	UserAdder
+}
+
+func (u *UserAdd) AddUserToDB(ctx context.Context, user models.UserAuth) error {
 	hashedPassword, err := bcrypt.GenerateFromPassword([]byte(user.Password), bcrypt.DefaultCost)
 	if err != nil {
 		return err
 	}
 
-	return s.db.AddUserToDB(ctx, user.Username, string(hashedPassword))
+	return u.UserAdder.AddUserToDB(ctx, user.Username, string(hashedPassword))
 }

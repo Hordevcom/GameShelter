@@ -6,6 +6,14 @@ import (
 	"github.com/Hordevcom/GameShelf/internal/models"
 )
 
-func (s *Service) GetUserGames(ctx context.Context, username string) ([]models.UserGames, error) {
-	return s.db.GetUserGames(ctx, username)
+type UserGameDBGetter interface {
+	GetUserGamesDB(ctx context.Context, username string) ([]models.UserGames, error)
+}
+
+type UserGamesGet struct {
+	UserGameDBGetter
+}
+
+func (u *UserGamesGet) GetUserGames(ctx context.Context, username string) ([]models.UserGames, error) {
+	return u.GetUserGamesDB(ctx, username)
 }

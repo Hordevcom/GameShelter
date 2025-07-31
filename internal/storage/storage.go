@@ -8,25 +8,42 @@ import (
 	"github.com/jackc/pgx/v5/pgxpool"
 )
 
-type PGDB struct {
-	DB     *pgxpool.Pool
-	Conf   config.Config
-	Logger *logging.Logger
+type Storages struct {
+	UserStorage
+	GameStorage
+	UserGamesStorage
 }
 
-func NewStorage(Conf config.Config, Logger *logging.Logger) *PGDB {
+func NewConnectionToDB(Conf config.Config, Logger *logging.Logger) (*pgxpool.Pool, error) {
 	db, err := pgxpool.New(context.Background(), Conf.DatabaseDsn)
 
 	if err != nil {
 		Logger.Error("Problem with connection to db: ", err)
-		return nil
+		return nil, err
 	}
 
 	err = db.Ping(context.Background())
 	if err != nil {
 		Logger.Error("Problem with ping to db: ", err)
-		return nil
+		return nil, err
 	}
 
-	return &PGDB{DB: db}
+	return db, nil
+}
+
+func NewStorages(Conf config.Config, Logger *logging.Logger) *Storages {
+	db, err := NewConnectionToDB(Conf, Logger)
+	if err != nil {
+		Logger.Error("Problem with connection to db: ", err)
+		return nil
+	}
+	UserStorage := NewUserStorage(Conf, Logger, db)
+	GameStorage := NewGameStorage(Conf, Logger, db)
+	UserGamesStorage := NewUserGameStorage(Conf, Logger, db)
+
+	return &Storages{
+		UserStorage:      *UserStorage,
+		GameStorage:      *GameStorage,
+		UserGamesStorage: *UserGamesStorage,
+	}
 }

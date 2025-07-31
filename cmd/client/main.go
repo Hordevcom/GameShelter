@@ -9,7 +9,22 @@ import (
 	tea "github.com/charmbracelet/bubbletea"
 )
 
-const url = "http://localhost:8080/api/users/a31lulus234ha/games"
+const (
+	apiURL      = "http://localhost:8080/api/users/a31lulus234ha/games"
+	httpTimeout = 10 * time.Second
+)
+
+var keyMap = struct {
+	Quit   string
+	Up     string
+	Down   string
+	Select string
+}{
+	Quit:   "q",
+	Up:     "up",
+	Down:   "down",
+	Select: "enter",
+}
 
 type model struct {
 	choices  []string
@@ -20,13 +35,11 @@ type model struct {
 }
 
 func checkGames() tea.Msg {
-	c := &http.Client{Timeout: 10 * time.Second}
-	res, err := c.Get(url)
-
+	client := &http.Client{Timeout: httpTimeout}
+	res, err := client.Get(apiURL)
 	if err != nil {
 		return err
 	}
-
 	return res.Body
 }
 
@@ -45,19 +58,18 @@ func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 	switch msg := msg.(type) {
 	case tea.KeyMsg:
 		switch msg.String() {
-		case "ctrl+c", "q":
+		case "ctrl+c", keyMap.Quit:
 			return m, tea.Quit
-		case "up":
+		case keyMap.Up:
 			if m.cursor > 0 {
 				m.cursor--
 			}
-		case "down":
+		case keyMap.Down:
 			if m.cursor < len(m.choices)-1 {
 				m.cursor++
 			}
-		case "enter":
-			_, ok := m.selected[m.cursor]
-			if ok {
+		case keyMap.Select:
+			if _, ok := m.selected[m.cursor]; ok {
 				delete(m.selected, m.cursor)
 			} else {
 				m.selected[m.cursor] = struct{}{}
@@ -84,7 +96,7 @@ func (m model) View() string {
 		s += fmt.Sprintf("%s [%s] %s\n", cursor, checked, choice)
 	}
 
-	s += "\nPress q to quit.\n"
+	s += fmt.Sprintf("\nPress '%s' to quit.\n", keyMap.Quit)
 
 	return s
 }
