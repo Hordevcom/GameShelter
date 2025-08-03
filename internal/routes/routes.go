@@ -5,14 +5,11 @@ import (
 	"github.com/Hordevcom/GameShelf/internal/middleware/auth"
 	"github.com/Hordevcom/GameShelf/internal/middleware/logging"
 	"github.com/Hordevcom/GameShelf/internal/services"
-	"github.com/Hordevcom/GameShelf/internal/storage"
 	"github.com/go-chi/chi/v5"
 )
 
-func NewRouter(log *logging.Logger, storages *storage.Storages) *chi.Mux {
+func NewRouter(log *logging.Logger, appServices *services.Services) *chi.Mux {
 	router := chi.NewRouter()
-
-	appServices := services.NewServices(storages)
 
 	router.Use(log.WithLogging)
 
