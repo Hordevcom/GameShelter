@@ -55,7 +55,7 @@ func (f *FriendsStorage) AddFriendForUserDB(ctx context.Context, username, frien
 }
 
 func (f *FriendsStorage) DeleteFriendForUserDB(ctx context.Context, user, friend string) error {
-	query := `DELETE friends 
+	query := `DELETE FROM friends 
               WHERE username = $1 AND friend = $2`
 
 	_, err := f.DB.Exec(ctx, query, user, friend)

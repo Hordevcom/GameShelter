@@ -49,3 +49,7 @@ type FriendRequestDB struct {
 	RequestStatus string    `json:"status"`
 	CretedAt      time.Time `json:"created_at"`
 }
+
+type Friend struct {
+	Username string `json:"username"`
+}

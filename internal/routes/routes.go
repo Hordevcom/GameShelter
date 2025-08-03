@@ -43,5 +43,14 @@ func NewRouter(log *logging.Logger, storages *storage.Storages) *chi.Mux {
 	router.With(auth.AuthMiddleware).
 		Get("/api/friendrequest", handlers.GetListOfFriendReqHandler(*log, &appServices.FriendRequest))
 
+	router.With(auth.AuthMiddleware).
+		Get("/api/friends", handlers.GetFriendsHandler(*log, &appServices.Friends))
+
+	router.With(auth.AuthMiddleware).
+		Post("/api/friends", handlers.AddFriendHandler(*log, &appServices.Friends))
+
+	router.With(auth.AuthMiddleware).
+		Delete("/api/friends", handlers.DeleteFriendHandler(*log, &appServices.Friends))
+
 	return router
 }

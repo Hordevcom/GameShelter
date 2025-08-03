@@ -10,6 +10,7 @@ type Services struct {
 	UserGamesFetcher UserGamesGet
 	UserGameUpdater  UserGameDbUpd
 	FriendRequest    FriendRequest
+	Friends          Friends
 }
 
 func NewServices(storages *storage.Storages) *Services {
@@ -25,5 +26,10 @@ func NewServices(storages *storage.Storages) *Services {
 			FriendReqDBUpdater: &storages.FriendReqStorage,
 			FriendReqDBDeleter: &storages.FriendReqStorage,
 			FrindReqDBGetter:   &storages.FriendReqStorage},
+		Friends: Friends{
+			FriendsServiceGetter:  &storages.FriendsStorage,
+			FriendsServiceAdder:   &storages.FriendsStorage,
+			FriendsServiceRemover: &storages.FriendsStorage,
+		},
 	}
 }
