@@ -15,6 +15,14 @@ BEGIN
     END IF;
 END
 $$;
+DO $$
+BEGIN
+    IF NOT EXISTS (SELECT 1 FROM pg_type WHERE typname = 'friend_req_status') THEN
+        CREATE TYPE friend_req_status AS ENUM ('pending', 'accepted', 'declined');
+    END IF;
+END
+$$;
+
 CREATE TABLE IF NOT EXISTS users (
     id SERIAL PRIMARY KEY,
     username TEXT UNIQUE NOT NULL,
@@ -37,6 +45,23 @@ CREATE TABLE IF NOT EXISTS user_games (
     updated_at TIMESTAMP DEFAULT NOW(),
     UNIQUE(username, game_title)
 );
+
+CREATE TABLE IF NOT EXISTS friend_requests (
+    id SERIAL PRIMARY KEY,
+    sender TEXT NOT NULL REFERENCES users(username) ON DELETE CASCADE,
+    receiver TEXT NOT NULL REFERENCES users(username) ON DELETE CASCADE,
+    req_status friend_req_status NOT NULL,
+    created_at TIMESTAMP DEFAULT NOW(),
+    UNIQUE (sender, receiver)
+);
+
+CREATE TABLE IF NOT EXISTS friends (
+    id SERIAL PRIMARY KEY,
+    username TEXT NOT NULL REFERENCES users(username) ON DELETE CASCADE,
+    friend TEXT NOT NULL REFERENCES users(username) ON DELETE CASCADE,
+    created_at TIMESTAMP DEFAULT NOW(),
+    UNIQUE (username, friend)
+);
 -- +goose StatementEnd
 
 -- +goose Down
@@ -45,4 +70,6 @@ DROP TABLE IF EXISTS user_games;
 DROP TABLE IF EXISTS users;
 DROP TABLE IF EXISTS games;
 DROP TYPE IF EXISTS game_status;
+DROP TYPE IF EXISTS friend_requests;
+DROP TYPE IF EXISTS friens;
 -- +goose StatementEnd

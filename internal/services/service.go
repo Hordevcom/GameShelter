@@ -9,6 +9,7 @@ type Services struct {
 	UserGameAdder    UserAddGame
 	UserGamesFetcher UserGamesGet
 	UserGameUpdater  UserGameDbUpd
+	FriendRequest    FriendRequest
 }
 
 func NewServices(storages *storage.Storages) *Services {
@@ -19,5 +20,10 @@ func NewServices(storages *storage.Storages) *Services {
 		UserGameAdder:    UserAddGame{UserGameAdderDBAdder: &storages.UserGamesStorage},
 		UserGamesFetcher: UserGamesGet{UserGameDBGetter: &storages.UserGamesStorage},
 		UserGameUpdater:  UserGameDbUpd{UserGameDBUpdater: &storages.UserGamesStorage},
+		FriendRequest: FriendRequest{
+			FriendReqDBAdder:   &storages.FriendReqStorage,
+			FriendReqDBUpdater: &storages.FriendReqStorage,
+			FriendReqDBDeleter: &storages.FriendReqStorage,
+			FrindReqDBGetter:   &storages.FriendReqStorage},
 	}
 }

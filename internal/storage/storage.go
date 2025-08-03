@@ -12,6 +12,8 @@ type Storages struct {
 	UserStorage
 	GameStorage
 	UserGamesStorage
+	FriendReqStorage
+	FriendsStorage
 }
 
 func NewConnectionToDB(Conf config.Config, Logger *logging.Logger) (*pgxpool.Pool, error) {
@@ -40,10 +42,14 @@ func NewStorages(Conf config.Config, Logger *logging.Logger) *Storages {
 	UserStorage := NewUserStorage(Conf, Logger, db)
 	GameStorage := NewGameStorage(Conf, Logger, db)
 	UserGamesStorage := NewUserGameStorage(Conf, Logger, db)
+	FriendReqStorage := NewFriendReqStorage(Conf, Logger, db)
+	FriendsStorage := NewFriendsStorage(Conf, Logger, db)
 
 	return &Storages{
 		UserStorage:      *UserStorage,
 		GameStorage:      *GameStorage,
 		UserGamesStorage: *UserGamesStorage,
+		FriendReqStorage: *FriendReqStorage,
+		FriendsStorage:   *FriendsStorage,
 	}
 }

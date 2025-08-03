@@ -36,3 +36,16 @@ type UserGameUpdate struct {
 	GameTitle  string `json:"title"`
 	GameStatus string `json:"status"`
 }
+
+type FriendRequestJSON struct {
+	Sender        string `json:"sender"`
+	Receiver      string `json:"receiver"`
+	RequestStatus string `json:"status"`
+}
+
+type FriendRequestDB struct {
+	Sender        string    `json:"sender"`
+	Receiver      string    `json:"receiver"`
+	RequestStatus string    `json:"status"`
+	CretedAt      time.Time `json:"created_at"`
+}
