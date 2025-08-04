@@ -1,0 +1,46 @@
+syntax = "proto3";
+
+package game_shelter;
+
+option go_package = "github.com/Hordevcom/GameShelf/pkg/pb";
+
+service GameShelterService {
+    rpc AddNewGame (NewGameRequest) returns (NewGameResponce);
+    rpc GetUserGames (UserGamesRequest) returns (UserGamesResponce);
+    rpc CreateFriendRequest (FriendReqRequest) returns (FriendReqResponce);
+}
+
+message FriendReqRequest {
+    string sender = 1;
+    string receiver = 2;
+    string status = 3;
+    string token = 4;
+}
+
+message FriendReqResponce {
+    string message = 1;
+}
+
+message UserGamesRequest {
+    string username = 1;
+}
+
+message UserGame {
+    string game_title = 1;
+    string game_status = 2;
+    string game_store = 3;
+    string updated_at = 4;
+}
+
+message UserGamesResponce {
+    repeated UserGame games = 1;
+}
+
+message NewGameRequest {
+    string title = 1;
+    string genre = 2;
+}
+
+message NewGameResponce {
+    string message = 1;
+}
